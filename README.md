@@ -26,10 +26,3 @@ Welcome to the **Fundamentals of Go** project! This repository is dedicated to e
 
 - Go installed on your system. [Download Go](https://golang.org/dl/)
 
-## Contributing
-
-Contributions are welcome! Feel free to fork the repository, make changes, and submit a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
