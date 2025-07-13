@@ -5,7 +5,9 @@ Welcome to the **Fundamentals of Go** project! This repository is dedicated to e
 ## Tasks Done
 
 - Implemented a grade calculator
-    - explore `grade-calculator` sub-folder
+  - explore `grade-calculator` sub-folder
+- Implemented a word frequency counter
+  - explore `word-frequency-count` sub-folder
 
 ## How to Run
 
