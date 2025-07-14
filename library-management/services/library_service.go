@@ -19,7 +19,7 @@ func NewLibrary() *Library {
 
 func (l *Library) AddBook(book models.Book) error {
 	if _, exist := l.books[book.ID]; exist {
-		return fmt.Errorf("The book with Book ID %d exists", book.ID)
+		return fmt.Errorf("the book with book id %d exists", book.ID)
 	}
 	l.books[book.ID] = &book
 	return nil
@@ -33,4 +33,14 @@ func (l *Library) ListAvailableBooks() []models.Book {
 		}
 	}
 	return bookList
+}
+
+
+func (l *Library) RemoveBook(bookID int) error {
+	_, exist := l.books[bookID]
+	if !exist {
+		return fmt.Errorf("a book with book id %d does not exist", bookID)
+	}
+	delete(l.books, bookID)
+	return nil
 }

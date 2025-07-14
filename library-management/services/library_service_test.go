@@ -48,3 +48,24 @@ func TestAddExistingBook(t *testing.T) {
 		t.Fatal("Expected an error when adding a book with a duplicate ID, but got nil")
 	}
 }
+
+// Test #3: Test removing a book
+func TestRemoveBook(t *testing.T) {
+	lib, book, _ := setupLibrary()
+
+	// Test successful removal
+	err := lib.RemoveBook(book.ID)
+	if err != nil {
+		t.Fatalf("RemoveBook failed unexpectedly: %v", err)
+	}
+
+	if _, exists := lib.books[book.ID]; exists {
+		t.Error("Book should have been removed, but it still exists in the map.")
+	}
+
+	// Test removing a non-existent book
+	err = lib.RemoveBook(999) // A non-existent ID
+	if err == nil {
+		t.Fatal("Expected an error when removing a non-existent book, but got nil")
+	}
+}
