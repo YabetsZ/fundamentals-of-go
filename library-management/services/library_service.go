@@ -1,12 +1,36 @@
 package services
 
-import "fundamentals-of-go/library-management/models"
+import (
+	"fmt"
+	"fundamentals-of-go/library-management/models"
+)
 
-type LibraryManager interface {
-	AddBook(book models.Book) error
-	RemoveBook(bookID int) error
-	BorrowBook(bookID int, memberID int) error
-	ReturnBook(bookID int, memberID int) error
-	ListAvailableBooks() []models.Book
-	ListBorrowedBooks(memberID int) ([]models.Book, error)
+type Library struct {
+	books map[int]*models.Book
+	members map[int]*models.Member
+}
+
+func NewLibrary() *Library {
+	return &Library{
+		books: make(map[int]*models.Book),
+		members: make(map[int]*models.Member),
+	}
+}
+
+func (l *Library) AddBook(book models.Book) error {
+	if _, exist := l.books[book.ID]; exist {
+		return fmt.Errorf("The book with Book ID %d exists", book.ID)
+	}
+	l.books[book.ID] = &book
+	return nil
+}
+
+func (l *Library) ListAvailableBooks() []models.Book {
+	bookList := make([]models.Book, 0, len(l.books))
+	for _, book := range l.books {
+		if book.Status == models.StatusAvailable {
+			bookList = append(bookList, *book)
+		}
+	}
+	return bookList
 }
