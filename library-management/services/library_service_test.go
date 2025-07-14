@@ -70,6 +70,7 @@ func TestRemoveBook(t *testing.T) {
 	}
 }
 
+// Test #4: Test borrowing a book
 func TestBorrowBook(t *testing.T) {
 	t.Run("Successful Borrow", func(t *testing.T) {
 		lib, book, member := setupLibrary()
@@ -120,4 +121,79 @@ func TestBorrowBook(t *testing.T) {
 			t.Error("Expected an error when borrowing an already borrowed book, but got nil")
 		}
 	})
+}
+
+// Test #5: Test returning a book
+func TestReturnBook(t *testing.T) {
+	t.Run("Successful Return", func(t *testing.T) {
+		lib, book, member := setupLibrary()
+		// We must borrow it first to be able to return it
+		_ = lib.BorrowBook(book.ID, member.ID)
+
+		err := lib.ReturnBook(book.ID, member.ID)
+		if err != nil {
+			t.Fatalf("ReturnBook failed unexpectedly: %v", err)
+		}
+
+		// Check 1: Book status is now "Available"
+		if lib.books[book.ID].Status != models.StatusAvailable {
+			t.Errorf("Expected book status to be '%s', but got '%s'", models.StatusAvailable, lib.books[book.ID].Status)
+		}
+
+		// Check 2: Member's borrowed list is now empty
+		if len(lib.members[member.ID].BorrowedBooks) != 0 {
+			t.Errorf("Expected member's borrowed list to be empty, but it has %d books", len(lib.members[member.ID].BorrowedBooks))
+		}
+	})
+
+	t.Run("Return a book that was not borrowed", func(t *testing.T) {
+		lib, book, member := setupLibrary() // Book is "Available" by default
+		err := lib.ReturnBook(book.ID, member.ID)
+		if err == nil {
+			t.Error("Expected an error when returning a book that was not borrowed, but got nil")
+		}
+	})
+
+	t.Run("Return a book for the wrong member", func(t *testing.T) {
+		lib, book, member1 := setupLibrary()
+
+		// Create a second member
+		member2 := models.Member{ID: 102, Name: "Jane Smith"}
+		lib.members[member2.ID] = &member2
+
+		// Member 1 borrows the book
+		_ = lib.BorrowBook(book.ID, member1.ID)
+
+		// Member 2 tries to return it
+		err := lib.ReturnBook(book.ID, member2.ID)
+		if err == nil {
+			t.Error("Expected an error when the wrong member tries to return a book, but got nil")
+		}
+	})
+}
+
+// Test #6: Test listing borrowed books by a member
+func TestListBorrowedBooks(t *testing.T) {
+	lib, book, member := setupLibrary()
+	// Borrow the book to set up the test state
+	_ = lib.BorrowBook(book.ID, member.ID)
+
+	borrowedBooks, err := lib.ListBorrowedBooks(member.ID)
+	if err != nil {
+		t.Fatalf("ListBorrowedBooks failed unexpectedly: %v", err)
+	}
+
+	if len(borrowedBooks) != 1 {
+		t.Fatalf("Expected to list 1 borrowed book, but got %d", len(borrowedBooks))
+	}
+
+	if borrowedBooks[0].ID != book.ID {
+		t.Errorf("Listed wrong book. Expected ID %d, got %d", book.ID, borrowedBooks[0].ID)
+	}
+
+	// Test listing for a non-existent member
+	_, err = lib.ListBorrowedBooks(999)
+	if err == nil {
+		t.Fatal("Expected an error when listing books for a non-existent member, but got nil")
+	}
 }
