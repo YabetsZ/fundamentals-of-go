@@ -69,3 +69,55 @@ func TestRemoveBook(t *testing.T) {
 		t.Fatal("Expected an error when removing a non-existent book, but got nil")
 	}
 }
+
+func TestBorrowBook(t *testing.T) {
+	t.Run("Successful Borrow", func(t *testing.T) {
+		lib, book, member := setupLibrary()
+
+		err := lib.BorrowBook(book.ID, member.ID)
+		if err != nil {
+			t.Fatalf("BorrowBook failed unexpectedly: %v", err)
+		}
+
+		// Check 1: The book's status in the main library list must be "Borrowed".
+		if lib.books[book.ID].Status != models.StatusBorrowed {
+			t.Errorf("Expected book status to be '%s', but got '%s'", models.StatusBorrowed, lib.books[book.ID].Status)
+		}
+
+		// Check 2: The book must be in the member's borrowed list.
+		if len(lib.members[member.ID].BorrowedBooks) != 1 {
+			t.Fatalf("Expected member's borrowed list to have 1 book, but got %d", len(lib.members[member.ID].BorrowedBooks))
+		}
+		if lib.members[member.ID].BorrowedBooks[0].ID != book.ID {
+			t.Errorf("Member borrowed the wrong book. Expected ID %d, got %d", book.ID, lib.members[member.ID].BorrowedBooks[0].ID)
+		}
+	})
+
+	t.Run("Borrow a non-existent book", func(t *testing.T) {
+		lib, _, member := setupLibrary()
+		err := lib.BorrowBook(999, member.ID)
+		if err == nil {
+			t.Error("Expected an error when borrowing a non-existent book, but got nil")
+		}
+	})
+
+	t.Run("Borrow with a non-existent member", func(t *testing.T) {
+		lib, book, _ := setupLibrary()
+		err := lib.BorrowBook(book.ID, 999)
+		if err == nil {
+			t.Error("Expected an error when borrowing with a non-existent member, but got nil")
+		}
+	})
+
+	t.Run("Borrow an already borrowed book", func(t *testing.T) {
+		lib, book, member := setupLibrary()
+		// First borrow is successful
+		_ = lib.BorrowBook(book.ID, member.ID)
+
+		// Try to borrow it again
+		err := lib.BorrowBook(book.ID, member.ID)
+		if err == nil {
+			t.Error("Expected an error when borrowing an already borrowed book, but got nil")
+		}
+	})
+}

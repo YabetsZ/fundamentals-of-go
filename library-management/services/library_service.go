@@ -44,3 +44,19 @@ func (l *Library) RemoveBook(bookID int) error {
 	delete(l.books, bookID)
 	return nil
 }
+
+func (l *Library) BorrowBook(bookID int, memberID int) error {
+	if _, exist := l.books[bookID]; !exist {
+		return fmt.Errorf("the book with id %v does not exist", bookID)
+	} else if l.books[bookID].Status == models.StatusBorrowed {
+		return fmt.Errorf("the book with id %v is borrowd", bookID)
+	} else if _, exist := l.members[memberID]; !exist {
+		return fmt.Errorf("the book with id %v does not exist", bookID)
+	}
+
+	l.books[bookID].Status = models.StatusBorrowed
+	l.members[memberID].BorrowedBooks = append(l.members[memberID].BorrowedBooks, *l.books[bookID])
+
+	return nil
+}
+
