@@ -10,6 +10,8 @@ Welcome to the **Fundamentals of Go** project! This repository is dedicated to e
   - explore `word-frequency-count` sub-folder
 - Implemented a palindrome checker
   - explore `palindrome-check` sub-folder
+- Implemented a console-based library management system
+  - explore `library-management` sub-folder
   
 
 ## How to Run
