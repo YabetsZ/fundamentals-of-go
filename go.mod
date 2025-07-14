@@ -1,3 +1,3 @@
-module gradecalculator
+module fundamentals-of-go
 
 go 1.24.5
