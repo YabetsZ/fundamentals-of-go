@@ -20,6 +20,8 @@ func main() {
 		fmt.Println("Inalid input: The input shouldn't be an empty string.")
 		fmt.Print("Give the string to check, again: ")
 	}
+	
+	input = strings.ReplaceAll(input, " ", "")
 
 	leftPtr, rightPtr := 0, len(input)-1
 	for leftPtr < rightPtr {
