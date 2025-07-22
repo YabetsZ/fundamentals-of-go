@@ -2,18 +2,20 @@ package services
 
 import (
 	"fmt"
-	"fundamentals-of-go/library-management/models"
+	"library-management/models"
 )
 
 type Library struct {
-	books map[int]*models.Book
+	books   map[int]*models.Book
 	members map[int]*models.Member
 }
 
 func NewLibrary() *Library {
+	startingMember := make(map[int]*models.Member)
+	startingMember[1] = &models.Member{ID: 1, Name: "John", BorrowedBooks: make([]models.Book, 0)}
 	return &Library{
-		books: make(map[int]*models.Book),
-		members: make(map[int]*models.Member),
+		books:   make(map[int]*models.Book),
+		members: startingMember,
 	}
 }
 
@@ -34,7 +36,6 @@ func (l *Library) ListAvailableBooks() []models.Book {
 	}
 	return bookList
 }
-
 
 func (l *Library) RemoveBook(bookID int) error {
 	_, exist := l.books[bookID]
@@ -62,7 +63,7 @@ func (l *Library) BorrowBook(bookID int, memberID int) error {
 
 func (l *Library) ReturnBook(bookID int, memberID int) error {
 	// check if the book exists
-	bookFromLib, exist := l.books[bookID];
+	bookFromLib, exist := l.books[bookID]
 	if !exist {
 		return fmt.Errorf("the book with id %v does not exist", bookID)
 	}
@@ -70,7 +71,7 @@ func (l *Library) ReturnBook(bookID int, memberID int) error {
 	member, exist := l.members[memberID]
 	if !exist {
 		return fmt.Errorf("the book with id %v does not exist", bookID)
-	} 
+	}
 	// check if the book is borrowed
 	if l.books[bookID].Status == models.StatusAvailable {
 		return fmt.Errorf("the book with id %v has not been borrowed", bookID)

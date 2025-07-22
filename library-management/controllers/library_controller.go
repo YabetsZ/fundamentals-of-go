@@ -3,7 +3,7 @@ package controllers
 import (
 	"bufio"
 	"fmt"
-	"fundamentals-of-go/library-management/models"
+	"library-management/models"
 	"os"
 )
 
@@ -15,7 +15,6 @@ type LibraryManager interface {
 	ListAvailableBooks() []models.Book
 	ListBorrowedBooks(memberID int) ([]models.Book, error)
 }
-
 
 // LibraryController handles the user interaction logic.
 type LibraryController struct {

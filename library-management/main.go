@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fundamentals-of-go/library-management/controllers"
-	"fundamentals-of-go/library-management/services"
+	"library-management/controllers"
+	"library-management/services"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 package services
 
 import (
-	"fundamentals-of-go/library-management/models"
+	"library-management/models"
 	"testing"
 )
 

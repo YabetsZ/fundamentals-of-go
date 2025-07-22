@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"fundamentals-of-go/library-management/models"
+	"library-management/models"
 	"strconv"
 	"strings"
 )
